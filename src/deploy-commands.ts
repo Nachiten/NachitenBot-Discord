@@ -33,6 +33,9 @@ const commands = [
         .setDescription("The second number")
         .setRequired(true)
     ),
+  new SlashCommandBuilder()
+    .setName("test")
+    .setDescription("Print all data possible"),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: "10" }).setToken(TOKEN);

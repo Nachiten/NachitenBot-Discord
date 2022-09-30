@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy-commands": "ts-node deploy-commands.ts",
-    "start": "ts-node index.ts",
-    "dev": "nodemon index.ts",
-    "lint": "eslint *.ts",
+    "deploy-commands": "ts-node src/deploy-commands.ts",
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts",
+    "lint": "eslint src/*.ts",
     "format": "prettier --write .",
     "check": "npm run format && npm run lint"
   },
