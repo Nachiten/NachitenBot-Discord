@@ -159,12 +159,11 @@ const getVoteResults = () => {
     //.setDescription('Some description here')
     .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Red_Hat_logo.svg/316px-Red_Hat_logo.svg.png')
     .addFields(
-      { name: 'Totals', value: 'Some value here' },
-      { name: '\u200B', value: '\u200B' },
-      { name: 'Inline field title', value: 'Some value here', inline: true },
-      { name: '\u200b', value: 'Some value here', inline: true },
+      { name: 'Totals:', value: '5 - 2 Votes\n13 - 1 Vote\n14 - 5 Vote' },
+      { name: 'Votes list:', value: 'Nachiten - 5\nLeonardo - 13\nManuel - 8' },
+      { name: 'Result:', value: 'Winner is 5 by simple mayority' },
     )
-    .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+    // .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
     //.setImage('https://i.imgur.com/AfFp7pu.png')
     .setTimestamp()
     .setFooter({ text: 'Created by nachiten' });
