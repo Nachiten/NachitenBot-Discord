@@ -2,7 +2,7 @@
   "name": "minsal-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
     "deploy-commands": "ts-node src/deploy-commands.ts",
     "start": "ts-node src/index.ts",
@@ -16,7 +16,9 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.5.0",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "mongoose": "^6.6.4",
+    "wokcommands": "github:AlexzanderFlores/WOKCommands-v2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.38.1",
