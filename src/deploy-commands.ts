@@ -14,15 +14,7 @@ const commands = [
     .setDescription("Replies with pong!"),
   new SlashCommandBuilder()
     .setName("vote-start")
-    .setDescription("Start a new voting session on the current channel")
-    .addNumberOption((option) =>
-      option
-        .setName("total-votes")
-        .setDescription(
-          "Total people participating in the votes, when total is reached, voting is ended automatically"
-        )
-        .setRequired(false)
-    ),
+    .setDescription("Start a new voting session on the current channel"),
   new SlashCommandBuilder()
     .setName("vote")
     .setDescription("Vote an option")
