@@ -17,8 +17,8 @@ Simple discord Bot for the Redhat-MinSal server.
 - `/points-get <user>` - Get the points of the user
 - `/points-leaderboard` - Get the leaderboard of the points for all teams
 
-# Important: Environment Variables
-The .env file **must** be created at the root of the project, and contain the following variables:
+# Setup
+File .env **must** be created at the root of the project, and contain the following variables:
 ```
 # Bot Token
 TOKEN=<token>
