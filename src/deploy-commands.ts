@@ -17,11 +17,11 @@ const commands = [
     .setDescription("Start a new voting session on the current channel"),
   new SlashCommandBuilder()
     .setName("vote")
-    .setDescription("Vote an option")
+    .setDescription("Vote an option on the current voting session")
     .addStringOption((option) =>
       option
         .setName("vote")
-        .setDescription("Your vote")
+        .setDescription("(required) Your vote")
         .setRequired(true)
         .addChoices(
           { name: "0", value: "0" },
