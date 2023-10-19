@@ -43,6 +43,14 @@ class GlobalStateManager {
   getVotes(): Map<User, string> {
     return this.state.votes;
   }
+
+  resetState(): void {
+    this.state = {
+      voteInProgress: false,
+      voteChannel: null,
+      votes: new Map<User, string>(),
+    };
+  }
 }
 
-export const globalStateManager = GlobalStateManager.getInstance();
+export const state = GlobalStateManager.getInstance();
