@@ -1,54 +1,61 @@
-import { REST, SlashCommandBuilder, Routes } from "discord.js";
+import fs from "fs";
+import path from "path";
+import { REST, Routes } from "discord.js";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-const TOKEN: string = process.env.TOKEN || "";
+const TOKEN: string = process.env.BOT_TOKEN || "";
 const CLIENT_ID: string = process.env.CLIENT_ID || "";
 const SERVER_ID: string = process.env.SERVER_ID || "";
 
-console.log(TOKEN);
+const commands = [];
 
-const commands = [
-  new SlashCommandBuilder()
-    .setName("ping")
-    .setDescription("Replies with pong!"),
-  new SlashCommandBuilder()
-    .setName("vote-start")
-    .setDescription("Start a new voting session on the current channel"),
-  new SlashCommandBuilder()
-    .setName("vote")
-    .setDescription("Vote an option on the current voting session")
-    .addStringOption((option) =>
-      option
-        .setName("vote")
-        .setDescription("(required) Your vote")
-        .setRequired(true)
-        .addChoices(
-          { name: "0", value: "0" },
-          { name: "1", value: "1" },
-          { name: "2", value: "2" },
-          { name: "3", value: "3" },
-          { name: "5", value: "5" },
-          { name: "8", value: "8" },
-          { name: "13", value: "13" },
-          { name: "21", value: "21" },
-          { name: "34", value: "34" },
-          { name: "55", value: "55" },
-          { name: "89", value: "89" },
-          { name: "?", value: "?" },
-          { name: "coffee", value: ":coffee:" }
-        )
-    ),
-  new SlashCommandBuilder()
-    .setName("vote-end")
-    .setDescription("End the voting session, and print the results"),
-].map((command) => command.toJSON());
+// Grab all the command files from the commands directory you created earlier
+const foldersPath = path.join(__dirname, "commands");
+const commandFolders = fs.readdirSync(foldersPath);
 
-const rest = new REST({ version: "10" }).setToken(TOKEN);
+for (const folder of commandFolders) {
+  // Grab all the command files from the commands directory you created earlier
+  const commandsPath = path.join(foldersPath, folder);
+  const commandFiles = fs
+    .readdirSync(commandsPath)
+    .filter((file) => file.endsWith(".ts"));
+  // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
+  for (const file of commandFiles) {
+    const filePath = path.join(commandsPath, file);
+    const command = require(filePath);
+    if ("data" in command && "execute" in command) {
+      commands.push(command.data.toJSON());
+    } else {
+      console.log(
+        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+      );
+    }
+  }
+}
 
-rest
-  .put(Routes.applicationGuildCommands(CLIENT_ID, SERVER_ID), { body: commands })
-  .then((data: any) =>
-    console.log(`Successfully registered ${data.length} application commands.`)
-  )
-  .catch(console.error);
+// Construct and prepare an instance of the REST module
+const rest = new REST().setToken(TOKEN);
+
+// Deploy the commands!
+(async () => {
+  try {
+    console.log(
+      `Started refreshing ${commands.length} application (/) commands.`
+    );
+
+    // The put method is used to fully refresh all commands in the guild with the current set
+    const data: any = await rest.put(
+      Routes.applicationGuildCommands(CLIENT_ID, SERVER_ID),
+      { body: commands }
+    );
+
+    console.log(
+      `Successfully reloaded ${data.length} application (/) commands.`
+    );
+  } catch (error) {
+    // And of course, make sure you catch and log any errors!
+    console.error(error);
+  }
+})();
