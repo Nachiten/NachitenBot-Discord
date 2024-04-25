@@ -16,7 +16,7 @@ export const stringToDate = (dateString: string): Date => {
   return new Date(dateString);
 };
 
-export const fromUserInputToString = (year?: number, month?: number, day?: number): string => {
+export const userInputToString = (userYear?: number, userMonth?: number, userDay?: number): string => {
   const todayDate = new Date();
 
   const todayYear: any = todayDate.getFullYear();
@@ -27,5 +27,8 @@ export const fromUserInputToString = (year?: number, month?: number, day?: numbe
   todayMonth = todayMonth < 10 ? `0${todayMonth}` : todayMonth;
   todayDay = todayDay < 10 ? `0${todayDay}` : todayDay;
 
-  return `${year || todayYear}-${month || todayMonth}-${day || todayDay}`;
+  const userMonthLeadingCeros = userMonth && userMonth < 10 ? `0${userMonth}` : userMonth;
+  const userDayLeadingCeros = userDay && userDay < 10 ? `0${userDay}` : userDay;
+
+  return `${userYear || todayYear}-${userMonthLeadingCeros || todayMonth}-${userDayLeadingCeros || todayDay}`;
 };
