@@ -6,6 +6,7 @@ import { dateToString, userInputToString } from "../../utils/date-utils";
 import { REDMINE_API_KEY } from "../../index";
 import { REDMINE_API_URL } from "../../index";
 import { getRedmineUserIdFromDiscordUserId } from "../../state/users";
+import { getNumberOption } from "../../utils/discord-utils";
 
 module.exports = {
   cooldown: 5,
@@ -13,45 +14,43 @@ module.exports = {
     .setName("no-me-quemes")
     .setDescription("Avisa si ya cargaste las horas!")
     .addIntegerOption((option) =>
-      option.setName("dia").setDescription("[OPCIONAL] Día a revisar. (Default es hoy)").setRequired(false),
+      option
+        .setName("dia")
+        .setDescription("[OPCIONAL] Día a revisar. (Default es hoy)")
+        .setRequired(false),
     )
     .addIntegerOption((option) =>
-      option.setName("mes").setDescription("[OPCIONAL] Mes a revisar. (Default es actual)").setRequired(false),
+      option
+        .setName("mes")
+        .setDescription("[OPCIONAL] Mes a revisar. (Default es actual)")
+        .setRequired(false),
     )
     .addIntegerOption((option) =>
-      option.setName("año").setDescription("[OPCIONAL] Año a revisar. (Default es actual)").setRequired(false),
+      option
+        .setName("año")
+        .setDescription("[OPCIONAL] Año a revisar. (Default es actual)")
+        .setRequired(false),
     ),
 
-  execute: async function(interaction: CommandInteraction) {
+  execute: async function (interaction: CommandInteraction) {
     await executeCommand(interaction);
   },
 };
 
-
 const executeCommand = async (interaction: CommandInteraction) => {
-  const selectedDay: number | undefined = interaction.options.get("dia")?.value as
-    | number
-    | undefined;
-  const selectedMonth: number | undefined = interaction.options.get("mes")?.value as
-    | number
-    | undefined;
-  const selectedYear: number | undefined = interaction.options.get("año")?.value as
-    | number
-    | undefined;
+  let selectedDay: number | undefined;
+  let selectedMonth: number | undefined;
+  let selectedYear: number | undefined;
 
-  // Validations on user input
-  if (selectedDay && (selectedDay < 1 || selectedDay > 31 || !Number.isInteger(selectedDay))) {
-    await interaction.reply({ content: "El día ingresado no es válido.", ephemeral: true });
-    return;
-  }
-
-  if (selectedMonth && (selectedMonth < 1 || selectedMonth > 12 || !Number.isInteger(selectedMonth))) {
-    await interaction.reply({ content: "El mes ingresado no es válido.", ephemeral: true });
-    return;
-  }
-
-  if (selectedYear && (selectedYear < 2020 || !Number.isInteger(selectedYear))) {
-    await interaction.reply("El año ingresado no es válido.");
+  try {
+    selectedDay = getNumberOption(interaction.options, "dia", 1, 31);
+    selectedMonth = getNumberOption(interaction.options, "mes", 1, 12);
+    selectedYear = getNumberOption(interaction.options, "año", 2024, 2050);
+  } catch (error: any) {
+    await interaction.reply({
+      content: error.message,
+      ephemeral: true,
+    });
     return;
   }
 
@@ -98,7 +97,7 @@ const executeCommand = async (interaction: CommandInteraction) => {
     })
     .catch(async (error) => {
       await interaction.reply({
-        content: `Ha ocurrido un error.`,
+        content: `Ha ocurrido un error. Por favor intente nuevamente.`,
         ephemeral: true,
       });
     });

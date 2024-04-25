@@ -12,11 +12,19 @@ export const dateToString = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
+export const stringToUnixTimestamp = (dateString: string): number => {
+  return stringToDate(dateString).getTime();
+}
+
 export const stringToDate = (dateString: string): Date => {
   return new Date(dateString);
 };
 
-export const userInputToString = (userYear?: number, userMonth?: number, userDay?: number): string => {
+export const userInputToString = (
+  userYear?: number,
+  userMonth?: number,
+  userDay?: number,
+): string => {
   const todayDate = new Date();
 
   const todayYear: any = todayDate.getFullYear();
@@ -30,5 +38,7 @@ export const userInputToString = (userYear?: number, userMonth?: number, userDay
   const userMonthLeadingCeros = userMonth && userMonth < 10 ? `0${userMonth}` : userMonth;
   const userDayLeadingCeros = userDay && userDay < 10 ? `0${userDay}` : userDay;
 
-  return `${userYear || todayYear}-${userMonthLeadingCeros || todayMonth}-${userDayLeadingCeros || todayDay}`;
+  return `${userYear || todayYear}-${userMonthLeadingCeros || todayMonth}-${
+    userDayLeadingCeros || todayDay
+  }`;
 };

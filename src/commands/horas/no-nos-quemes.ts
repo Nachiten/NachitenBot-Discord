@@ -5,7 +5,7 @@ import { TimeEntries } from "../../model/time-entries";
 import { REDMINE_API_KEY } from "../../index";
 import { REDMINE_API_URL } from "../../index";
 import { MercelUser, USERS } from "../../state/users";
-import { generateUserTag } from "../../utils/discord-utils";
+import { generateUserTag, getNumberOption } from "../../utils/discord-utils";
 import { dateToString, userInputToString } from "../../utils/date-utils";
 
 module.exports = {
@@ -14,46 +14,44 @@ module.exports = {
     .setName("no-nos-quemes")
     .setDescription("Avisa si todo el equipo ya cargo las horas!")
     .addIntegerOption((option) =>
-      option.setName("dia").setDescription("[OPCIONAL] Día a revisar. (Default es hoy)").setRequired(false),
+      option
+        .setName("dia")
+        .setDescription("[OPCIONAL] Día a revisar. (Default es hoy)")
+        .setRequired(false),
     )
     .addIntegerOption((option) =>
-      option.setName("mes").setDescription("[OPCIONAL] Mes a revisar. (Default es actual)").setRequired(false),
+      option
+        .setName("mes")
+        .setDescription("[OPCIONAL] Mes a revisar. (Default es actual)")
+        .setRequired(false),
     )
     .addIntegerOption((option) =>
-      option.setName("año").setDescription("[OPCIONAL] Año a revisar. (Default es actual)").setRequired(false),
+      option
+        .setName("año")
+        .setDescription("[OPCIONAL] Año a revisar. (Default es actual)")
+        .setRequired(false),
     ),
 
-  execute: async function(interaction: CommandInteraction) {
-    const selectedDay: number | undefined = interaction.options.get("dia")?.value as
-      | number
-      | undefined;
-    const selectedMonth: number | undefined = interaction.options.get("mes")?.value as
-      | number
-      | undefined;
-    const selectedYear: number | undefined = interaction.options.get("año")?.value as
-      | number
-      | undefined;
+  execute: async function (interaction: CommandInteraction) {
+    let selectedDay: number | undefined;
+    let selectedMonth: number | undefined;
+    let selectedYear: number | undefined;
 
-    // Validations on user input
-    if (selectedDay && (selectedDay < 1 || selectedDay > 31 || !Number.isInteger(selectedDay))) {
-      await interaction.reply({ content: "El día ingresado no es válido.", ephemeral: true });
-      return;
-    }
-
-    if (selectedMonth && (selectedMonth < 1 || selectedMonth > 12 || !Number.isInteger(selectedMonth))) {
-      await interaction.reply({ content: "El mes ingresado no es válido.", ephemeral: true });
-      return;
-    }
-
-    if (selectedYear && (selectedYear < 2020 || !Number.isInteger(selectedYear))) {
-      await interaction.reply("El año ingresado no es válido.");
+    try {
+      selectedDay = getNumberOption(interaction.options, "dia", 1, 31);
+      selectedMonth = getNumberOption(interaction.options, "mes", 1, 12);
+      selectedYear = getNumberOption(interaction.options, "año", 2024, 2050);
+    } catch (error: any) {
+      await interaction.reply({
+        content: error.message,
+        ephemeral: true,
+      });
       return;
     }
 
     const selectedDateString = userInputToString(selectedYear, selectedMonth, selectedDay);
 
-    axios
-      .get(REDMINE_API_URL + "/time_entries.json", {
+    axios.get(REDMINE_API_URL + "/time_entries.json", {
         params: { key: REDMINE_API_KEY },
       })
       .then(async (response) => {
@@ -79,7 +77,9 @@ module.exports = {
           }
         });
 
-        const usersNotSubmittedString = usersNotSubmitted.length ? usersNotSubmitted.join("") : "Todos cargaron las horas!!! :D :D :D";
+        const usersNotSubmittedString = usersNotSubmitted.length
+          ? usersNotSubmitted.join("")
+          : "Todos cargaron las horas!!! :D :D :D";
 
         const todayDate = new Date();
         const todayDateString: string = dateToString(todayDate);
@@ -107,8 +107,11 @@ module.exports = {
 
         await interaction.reply({ embeds: [responseEmbed] });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(async (error) => {
+        await interaction.reply({
+          content: `Ha ocurrido un error. Por favor intente nuevamente.`,
+          ephemeral: true,
+        });
       });
   },
 };
