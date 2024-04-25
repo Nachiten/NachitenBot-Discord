@@ -42,9 +42,7 @@ const getVoteResults = () => {
   });
 
   // Sort summed votes by value decreasing
-  const sortedSummedVotes = new Map(
-    [...summedVotes.entries()].sort((a, b) => b[1] - a[1])
-  );
+  const sortedSummedVotes = new Map([...summedVotes.entries()].sort((a, b) => b[1] - a[1]));
 
   let totals = "";
 
@@ -60,7 +58,7 @@ const getVoteResults = () => {
 
   //Order de votes decreasing
   const orderedVotes = new Map(
-    [...state.getVotes().entries()].sort((a, b) => b[1].localeCompare(a[1]))
+    [...state.getVotes().entries()].sort((a, b) => b[1].localeCompare(a[1])),
   );
 
   let votesList = "";
@@ -103,12 +101,12 @@ const getVoteResults = () => {
         "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Red_Hat_logo.svg/316px-Red_Hat_logo.svg.png",
     })
     .setThumbnail(
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Red_Hat_logo.svg/316px-Red_Hat_logo.svg.png"
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Red_Hat_logo.svg/316px-Red_Hat_logo.svg.png",
     )
     .addFields(
       { name: "Totals:", value: totals || "There are no votes" },
       { name: "Votes list:", value: votesList || "There are no votes" },
-      { name: "Result:", value: result || "Error" }
+      { name: "Result:", value: result || "Error" },
     )
     .setTimestamp()
     .setFooter({ text: "Created by Nachiten" });

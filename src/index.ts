@@ -5,7 +5,9 @@ import path from "path";
 
 dotenv.config();
 
-const TOKEN: string = process.env.BOT_TOKEN || "";
+const TOKEN: string = process.env.DISCORD_BOT_TOKEN || "";
+export const REDMINE_API_URL = process.env.REDMINE_API_URL || "";
+export const REDMINE_API_KEY = process.env.REDMINE_API_KEY || "";
 
 // Generate client with intents
 const client: any = new Client({
@@ -25,9 +27,7 @@ const commandFolders = fs.readdirSync(foldersPath);
 // Get all the command files from the commands directory
 for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
-  const commandFiles = fs
-    .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".ts"));
+  const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".ts"));
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
@@ -36,7 +36,7 @@ for (const folder of commandFolders) {
       client.commands.set(command.data.name, command);
     } else {
       console.log(
-        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
       );
     }
   }

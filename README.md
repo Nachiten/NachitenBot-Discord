@@ -25,16 +25,23 @@ File .env **must** be created at the root of the project, and contain the follow
 
 ```
 # Discord Bot Token
-BOT_TOKEN=<token>
+DISCORD_BOT_TOKEN=<token>
 # Bot Client ID
-CLIENT_ID=1010164462487085066
-# Discord Server ID
-SERVER_ID=998593186098315425
+DISCORD_BOT_CLIENT_ID=1010164462487085066
+# Discord Server ID (To deploy commands)
+DISCORD_SERVER_ID=998593186098315425
+REDMINE_API_URL=<redmine_api_url>
+REDMINE_API_KEY=<redmine_api_key>
 # Mongo DB URL (Not used nor needed yet)
-MONGO_URL=<db_url>
+DB_MONGO_URL=<db_url>
 ```
 
-# Usage:
+# For production:
 
 1. Deploy the commands on the server: `npm run deploy-commands` (runs once and finishes)
 2. Start the bot: `npm run start` (stars the bot and keeps it running)
+
+# For development:
+
+1. Run: `npm run deploy-commands` to deploy commands only for new or edited command name or parameters. DO NOT use this often, you will get a rate limit from discord.
+2. Start the bot: `npm run dev` (starts the bot in development mode, with hot reload)

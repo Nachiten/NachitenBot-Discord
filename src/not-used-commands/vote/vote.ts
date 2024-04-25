@@ -24,8 +24,8 @@ module.exports = {
           { name: "55", value: "55" },
           { name: "89", value: "89" },
           { name: "?", value: "?" },
-          { name: "coffee", value: ":coffee:" }
-        )
+          { name: "coffee", value: ":coffee:" },
+        ),
     ),
 
   async execute(interaction: CommandInteraction) {

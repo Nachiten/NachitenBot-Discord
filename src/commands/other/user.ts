@@ -13,7 +13,7 @@ module.exports = {
     const guildMember = interaction.member as GuildMember;
 
     await interaction.reply(
-      `This command was run by ${interaction.user.username}, who joined on ${guildMember.joinedAt}.`
+      `This command was run by ${interaction.user.username}, who joined on ${guildMember.joinedAt}.`,
     );
   },
 };
