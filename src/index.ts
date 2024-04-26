@@ -1,4 +1,4 @@
-import { GatewayIntentBits, Client, Events, Collection } from "discord.js";
+import { GatewayIntentBits, Client, Collection } from "discord.js";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
@@ -42,41 +42,20 @@ for (const folder of commandFolders) {
   }
 }
 
-// Is triggered when the bot is ready
-client.once(Events.ClientReady, (client: Client<true>) => {
-  console.log(`[INFO] The bot is ready! Logged in as ${client.user.tag}`);
-});
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.ts'));
+
+for (const file of eventFiles) {
+  const filePath = path.join(eventsPath, file);
+  const event = require(filePath);
+  if (event.once) {
+    client.once(event.name, (...args: any) => event.execute(...args));
+  } else {
+    client.on(event.name, (...args: any) => event.execute(...args));
+  }
+}
 
 // Logs the bot in discord using the token
 client.login(TOKEN).catch((error: any) => {
-  console.error("[LOGIN_ERROR] An error has happened: ", error);
-});
-
-// Triggered when a command is used
-client.on(Events.InteractionCreate, async (interaction: any) => {
-  if (!interaction.isChatInputCommand()) return;
-
-  const command = interaction.client.commands.get(interaction.commandName);
-
-  if (!command) {
-    console.error(`No command matching ${interaction.commandName} was found.`);
-    return;
-  }
-
-  try {
-    await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({
-        content: "There was an error while executing this command!",
-        ephemeral: true,
-      });
-    } else {
-      await interaction.reply({
-        content: "There was an error while executing this command!",
-        ephemeral: true,
-      });
-    }
-  }
+  console.error("[ERROR] Login error: ", error);
 });
