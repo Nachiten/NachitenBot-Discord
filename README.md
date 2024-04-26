@@ -30,8 +30,8 @@ DISCORD_BOT_TOKEN=<token>
 DISCORD_BOT_CLIENT_ID=1010164462487085066
 # Discord Server ID (To deploy commands)
 DISCORD_SERVER_ID=998593186098315425
-REDMINE_API_URL=<redmine_api_url>
-REDMINE_API_KEY=<redmine_api_key>
+REDMINE_API_URL=<api_url>
+REDMINE_API_KEY=<api_key>
 # Mongo DB URL (Not used nor needed yet)
 DB_MONGO_URL=<db_url>
 ```
