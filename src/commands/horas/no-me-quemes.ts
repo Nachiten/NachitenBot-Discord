@@ -81,7 +81,9 @@ const executeCommand = async (interaction: CommandInteraction) => {
       // Filter time entries for today
       const todayTimeEntries = timeEntries.filter((entry) => entry.spent_on === selectedDateString);
 
-      const selectedDateUnixTag = generateDateTimestampFormat(stringToUnixTimestamp(selectedDateString));
+      const selectedDateUnixTag = generateDateTimestampFormat(
+        stringToUnixTimestamp(selectedDateString),
+      );
 
       if (todayTimeEntries.length === 0) {
         await interaction.reply({

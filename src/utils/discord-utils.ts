@@ -4,9 +4,9 @@ export const generateUserTagFormat = (discordUserId: string): string => {
   return `<@${discordUserId}>`;
 };
 
-export const generateDateTimestampFormat = (unixTimestamp: string ): string => {
+export const generateDateTimestampFormat = (unixTimestamp: string): string => {
   return `<t:${unixTimestamp}:d>`;
-}
+};
 
 export const getNumberOption = (
   options: DiscordCommandOptions,

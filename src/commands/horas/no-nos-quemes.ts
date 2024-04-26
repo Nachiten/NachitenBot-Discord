@@ -5,8 +5,12 @@ import { TimeEntries } from "../../model/time-entries";
 import { REDMINE_API_KEY } from "../../index";
 import { REDMINE_API_URL } from "../../index";
 import { MercelUser, USERS } from "../../state/users";
-import { generateDateTimestampFormat, generateUserTagFormat, getNumberOption } from "../../utils/discord-utils";
-import { dateToString, stringToUnixTimestamp, userInputToString } from "../../utils/date-utils";
+import {
+  generateDateTimestampFormat,
+  generateUserTagFormat,
+  getNumberOption,
+} from "../../utils/discord-utils";
+import { stringToUnixTimestamp, userInputToString } from "../../utils/date-utils";
 
 module.exports = {
   cooldown: 5,
@@ -85,7 +89,9 @@ const executeCommand = async (interaction: CommandInteraction) => {
         ? usersNotSubmitted.join("")
         : "Todos cargaron las horas!!! :D :D :D";
 
-      const selectedDateUnixTag = generateDateTimestampFormat(stringToUnixTimestamp(selectedDateString));
+      const selectedDateUnixTag = generateDateTimestampFormat(
+        stringToUnixTimestamp(selectedDateString),
+      );
 
       const responseEmbed = new EmbedBuilder()
         .setColor(0x0099ff)

@@ -18,7 +18,7 @@ export const stringToUnixTimestamp = (dateString: string): string => {
 export const dateToUnixTimestamp = (date: Date): string => {
   // time/1000 to convert from milliseconds to seconds
   return (date.getTime() / 1000).toString();
-}
+};
 
 export const stringToDate = (dateString: string): Date => {
   // string format is "YYYY-MM-DD"

@@ -23,7 +23,7 @@ export const USERS: MercelUser[] = [
   {
     discordUserId: "1007640317027160146",
     redmineUserId: 14,
-    name: "Leo"
+    name: "Leo",
   },
   {
     discordUserId: "1026494752528535602",
@@ -46,6 +46,5 @@ export const getUserFromRedmineUserId = (redmineUserId: number): MercelUser | nu
 };
 
 export const getRedmineUserIdFromDiscordUserId = (discordUserId: string): number | null => {
-  const user = getUserFromDiscordUserId(discordUserId);
-  return user ? user.redmineUserId : null;
+  return getUserFromDiscordUserId(discordUserId)?.redmineUserId || null;
 };
