@@ -1,16 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, EmbedBuilder } from "discord.js";
-import axios from "axios";
-import { TimeEntries } from "../../model/time-entries";
-import { REDMINE_API_KEY } from "../../index";
-import { REDMINE_API_URL } from "../../index";
-import { MercelUser, USERS } from "../../state/users";
+import { CommandInteraction } from "discord.js";
 import {
-  generateDateTimestampFormat,
-  generateUserTagFormat,
   getNumberOption,
 } from "../../utils/discord-utils";
-import { stringToUnixTimestamp, userInputToString } from "../../utils/date-utils";
+import { doNoNosQuemesLogic } from "../../utils/do-no-nos-quemes-logic";
 
 module.exports = {
   cooldown: 5,
@@ -58,66 +51,5 @@ const executeCommand = async (interaction: CommandInteraction) => {
     return;
   }
 
-  const selectedDateString = userInputToString(selectedYear, selectedMonth, selectedDay);
-
-  axios
-    .get(REDMINE_API_URL + "/time_entries.json", {
-      params: { key: REDMINE_API_KEY },
-      timeout: 2500,
-    })
-    .then(async (response) => {
-      const data: TimeEntries = response.data as TimeEntries;
-      const timeEntries = data.time_entries;
-
-      const usersNotSubmitted: string[] = [];
-
-      // For each user, check if they have submitted their time entries for today
-      // Filtering time entries first for user and then for today
-      USERS.forEach((user: MercelUser) => {
-        const userTimeEntries = timeEntries.filter((entry) => entry.user.id === user.redmineUserId);
-        const todayTimeEntries = userTimeEntries.filter(
-          (entry) => entry.spent_on === selectedDateString && entry.user.id === user.redmineUserId,
-        );
-
-        if (todayTimeEntries.length === 0) {
-          const userNotSubmittedString = generateUserTagFormat(user.discordUserId) + "\n";
-          usersNotSubmitted.push(userNotSubmittedString);
-        }
-      });
-
-      const usersNotSubmittedString = usersNotSubmitted.length
-        ? usersNotSubmitted.join("")
-        : "Todos cargaron las horas!!! :D :D :D";
-
-      const selectedDateUnixTag = generateDateTimestampFormat(
-        stringToUnixTimestamp(selectedDateString),
-      );
-
-      const responseEmbed = new EmbedBuilder()
-        .setColor(0x0099ff)
-        .setTitle("Información de carga de horas")
-        .setURL("https://discordjs.guide/")
-        .setAuthor({
-          name: "MinSalBot",
-          iconURL:
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Red_Hat_logo.svg/316px-Red_Hat_logo.svg.png",
-        })
-        .setThumbnail(
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Red_Hat_logo.svg/316px-Red_Hat_logo.svg.png",
-        )
-        .addFields({
-          name: `Personas que no cargaron horas del ${selectedDateUnixTag}:`,
-          value: usersNotSubmittedString,
-        })
-        .setTimestamp()
-        .setFooter({ text: "Created by Nachiten" });
-
-      await interaction.reply({ embeds: [responseEmbed] });
-    })
-    .catch(async (_) => {
-      await interaction.reply({
-        content: `Ha ocurrido un error conectándose a Redmine. Por favor, intentá de nuevo más tarde.`,
-        ephemeral: true,
-      });
-    });
+  await doNoNosQuemesLogic(interaction, selectedYear, selectedMonth, selectedDay);
 };
