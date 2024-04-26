@@ -12,6 +12,8 @@ module.exports = {
       return;
     }
 
+    console.log(`[INFO] ${interaction.user.tag} used /${interaction.commandName}`);
+
     try {
       await command.execute(interaction);
     } catch (error) {
