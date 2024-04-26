@@ -2,11 +2,11 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import axios from "axios";
 import { TimeEntries } from "../../model/time-entries";
-import { dateToString, userInputToString } from "../../utils/date-utils";
+import { stringToUnixTimestamp, userInputToString } from "../../utils/date-utils";
 import { REDMINE_API_KEY } from "../../index";
 import { REDMINE_API_URL } from "../../index";
 import { getRedmineUserIdFromDiscordUserId } from "../../state/users";
-import { getNumberOption } from "../../utils/discord-utils";
+import { generateDateTimestampFormat, getNumberOption } from "../../utils/discord-utils";
 
 module.exports = {
   cooldown: 5,
@@ -68,36 +68,36 @@ const executeCommand = async (interaction: CommandInteraction) => {
 
   axios
     .get(REDMINE_API_URL + "/time_entries.json", {
-      params: { key: REDMINE_API_KEY, user_id: redmineUserId },
+      params: {
+        key: REDMINE_API_KEY,
+        user_id: redmineUserId,
+      },
+      timeout: 2500,
     })
     .then(async (response) => {
       const data: TimeEntries = response.data as TimeEntries;
       const timeEntries = data.time_entries;
 
-      // Get current date
-      const todayDate = new Date();
-      const todayDateString: string = dateToString(todayDate);
-
       // Filter time entries for today
       const todayTimeEntries = timeEntries.filter((entry) => entry.spent_on === selectedDateString);
 
-      const isToday = todayDateString === selectedDateString ? " [Hoy]" : "";
+      const selectedDateUnixTag = generateDateTimestampFormat(stringToUnixTimestamp(selectedDateString));
 
       if (todayTimeEntries.length === 0) {
         await interaction.reply({
-          content: `Todavía no cargaste tus horas el día ${selectedDateString}${isToday}. No te olvides de hacerlo!!!!`,
+          content: `Todavía no cargaste tus horas del ${selectedDateUnixTag}. No te olvides de hacerlo!!!!`,
           ephemeral: true,
         });
       } else {
         await interaction.reply({
-          content: `Ya cargaste horas el día ${selectedDateString}${isToday}!!! :D`,
+          content: `Ya cargaste horas del ${selectedDateUnixTag}!!! :D`,
           ephemeral: true,
         });
       }
     })
-    .catch(async (error) => {
+    .catch(async (_) => {
       await interaction.reply({
-        content: `Ha ocurrido un error. Por favor intente nuevamente.`,
+        content: `Ha ocurrido un error conectándose a Redmine. Por favor, intentá de nuevo más tarde.`,
         ephemeral: true,
       });
     });

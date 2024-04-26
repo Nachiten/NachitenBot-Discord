@@ -1,5 +1,4 @@
 export const dateToString = (date: Date): string => {
-  // Extract year, month, and day from the Date object
   const year: any = date.getFullYear(); // Get the year (four digits)
   let month: any = date.getMonth() + 1; // Get the month (0-11, add 1 to get 1-12)
   let day: any = date.getDate(); // Get the day of the month (1-31)
@@ -12,12 +11,24 @@ export const dateToString = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-export const stringToUnixTimestamp = (dateString: string): number => {
-  return stringToDate(dateString).getTime();
+export const stringToUnixTimestamp = (dateString: string): string => {
+  return dateToUnixTimestamp(stringToDate(dateString));
+};
+
+export const dateToUnixTimestamp = (date: Date): string => {
+  // time/1000 to convert from milliseconds to seconds
+  return (date.getTime() / 1000).toString();
 }
 
 export const stringToDate = (dateString: string): Date => {
-  return new Date(dateString);
+  // string format is "YYYY-MM-DD"
+  const dateParts = dateString.split("-");
+
+  const year = parseInt(dateParts[0]);
+  const month = parseInt(dateParts[1]) - 1; // Subtract 1 to get 0-11
+  const day = parseInt(dateParts[2]);
+
+  return new Date(year, month, day);
 };
 
 export const userInputToString = (

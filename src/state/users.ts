@@ -20,7 +20,11 @@ export const USERS: MercelUser[] = [
     redmineUserId: 30,
     name: "Rama",
   },
-  { discordUserId: "1007640317027160146", redmineUserId: 14, name: "Leo" },
+  {
+    discordUserId: "1007640317027160146",
+    redmineUserId: 14,
+    name: "Leo"
+  },
   {
     discordUserId: "1026494752528535602",
     redmineUserId: 29,
