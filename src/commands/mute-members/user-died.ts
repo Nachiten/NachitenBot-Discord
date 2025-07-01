@@ -1,5 +1,11 @@
 import { SlashCommandBuilder, userMention } from "@discordjs/builders";
-import { ChannelType, ChatInputCommandInteraction, GuildMember, PermissionsBitField, User } from "discord.js";
+import {
+  ChannelType,
+  ChatInputCommandInteraction,
+  GuildMember,
+  PermissionsBitField,
+  User,
+} from "discord.js";
 import { deadPlayers } from "../../state/state";
 
 module.exports = {

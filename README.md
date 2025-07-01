@@ -1,8 +1,11 @@
 # NachitenBot-Discord
+
 Simple Discord bot with discord.js
 
 ## Features
+
 ### For playing Among Us
+
 - `mute-channel`: Mute everyone in a voice channel.
 - `unmute-channel`: Unmute everyone in a voice channel.
 - `user-died`: Mark a user as dead in game, so they will remain muted.
@@ -10,6 +13,7 @@ Simple Discord bot with discord.js
 - `reset-game`: Reset the game, unmuting all users and clearing the dead list.
 
 ### Other commands
+
 - `button-test`: Simple button test command.
 - `list-voice-channels`: List all voice channels in the server.
 - `ping`: Simple ping command to check if the bot is online.
