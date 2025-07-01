@@ -1,25 +1,21 @@
-# MinSal-Bot
+# NachitenBot-Discord
+Simple Discord bot with discord.js
 
-Simple discord Bot for the Redhat-MinSal server.
+## Features
+### For playing Among Us
+- `mute-channel`: Mute everyone in a voice channel.
+- `unmute-channel`: Unmute everyone in a voice channel.
+- `user-died`: Mark a user as dead in game, so they will remain muted.
+- `dead-users`: List all dead users in the game.
+- `reset-game`: Reset the game, unmuting all users and clearing the dead list.
 
-# Features
+### Other commands
+- `button-test`: Simple button test command.
+- `list-voice-channels`: List all voice channels in the server.
+- `ping`: Simple ping command to check if the bot is online.
+- `server`: Show server information.
 
-**Voting:**
-
-- `/vote-start` - Start a new voting session on the current channel
-- `/vote <option>` - Vote an option on the current voting session
-- `/vote-end` - End the voting session, and print the results
-
-**(coming soon) Points system:**
-
-- `/points-new <user> <team>` - Add new user to the score system, and assign a team (repro, vitales)
-- `/points-add <user> <points>` - Add points to the user
-- `/points-remove <user> <points>` - Remove points from the user
-- `/points-set <user>` - Set the points of the user
-- `/points-get <user>` - Get the points of the user
-- `/points-leaderboard` - Get the leaderboard of the points for all teams
-
-# Setup
+## Setup
 
 File .env **must** be created at the root of the project, and contain the following variables:
 
@@ -27,21 +23,17 @@ File .env **must** be created at the root of the project, and contain the follow
 # Discord Bot Token
 DISCORD_BOT_TOKEN=<token>
 # Bot Client ID
-DISCORD_BOT_CLIENT_ID=1010164462487085066
+DISCORD_BOT_CLIENT_ID=<bot_client_id>
 # Discord Server ID (To deploy commands)
-DISCORD_SERVER_ID=998593186098315425
-REDMINE_API_URL=<api_url>
-REDMINE_API_KEY=<api_key>
-# Mongo DB URL (Not used nor needed yet)
-DB_MONGO_URL=<db_url>
+DISCORD_SERVER_ID=<discord_server_id>
 ```
 
-# For production:
+## For development:
+
+1. Run: `npm run deploy-commands` to deploy commands. Only for create, update, or delete of command name or parameters. DO NOT use this often, you will get a rate limit from discord.
+2. Start the bot: `npm run dev` (starts the bot in development mode, with hot reload)
+
+## For production:
 
 1. Deploy the commands on the server: `npm run deploy-commands` (runs once and finishes)
 2. Start the bot: `npm run start` (stars the bot and keeps it running)
-
-# For development:
-
-1. Run: `npm run deploy-commands` to deploy commands only for new or edited command name or parameters. DO NOT use this often, you will get a rate limit from discord.
-2. Start the bot: `npm run dev` (starts the bot in development mode, with hot reload)

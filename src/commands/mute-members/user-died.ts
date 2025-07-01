@@ -13,7 +13,10 @@ module.exports = {
   async execute(interaction: ChatInputCommandInteraction) {
     const EPHEMERAL_MODE = false;
 
-    const member: GuildMember = interaction.member as GuildMember;
+    const deadUser: User = interaction.options.getUser("user", true);
+    const deadMember = interaction.guild!.members.cache.get(deadUser.id) as GuildMember;
+
+    const member = interaction.member as GuildMember;
     const requiredPermission = PermissionsBitField.Flags.MuteMembers;
 
     // Check if user has permission
@@ -23,8 +26,6 @@ module.exports = {
         ...(EPHEMERAL_MODE ? { flags: 1 << 6 } : {}),
       });
     }
-
-    const deadUser: User = interaction.options.getUser("user", true);
 
     // Check if user is already dead
     if (deadPlayers.has(deadUser.id)) {
@@ -36,11 +37,11 @@ module.exports = {
 
     deadPlayers.add(deadUser.id);
 
-    const channel = member.voice.channel;
+    const channel = deadMember.voice.channel;
 
     if (channel && channel.type === ChannelType.GuildVoice) {
       try {
-        await member.voice.setMute(true, "Player died");
+        await deadMember.voice.setMute(true, "Player died");
       } catch (e) {
         console.warn(`Couldn't mute ${deadUser.tag}:`, e);
       }
