@@ -19,6 +19,7 @@ for (const folder of commandFolders) {
   // Grab all the command files from the commands directory you created earlier
   const commandsPath = path.join(foldersPath, folder);
   const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".ts"));
+
   // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
@@ -40,6 +41,11 @@ const rest = new REST().setToken(TOKEN);
 (async () => {
   try {
     console.log(`Started refreshing ${commands.length} application (/) commands.`);
+
+    // List every command name
+    commands.forEach((command) => {
+      console.log(`- ${command.name}`);
+    });
 
     // The put method is used to fully refresh all commands in the guild with the current set
     const data: any = await rest.put(Routes.applicationGuildCommands(CLIENT_ID, SERVER_ID), {

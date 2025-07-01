@@ -3,17 +3,25 @@ import { Events } from "discord.js";
 module.exports = {
   name: Events.InteractionCreate,
   async execute(interaction: any) {
+    const userTag = interaction.user.tag;
+
     if (interaction.isChatInputCommand()) {
-      const command = interaction.client.commands.get(interaction.commandName);
+      const commandName = interaction.commandName;
+
+      console.log(`[INFO] ${userTag} used command /${commandName}`);
+
+      const command = interaction.client.commands.get(commandName);
+
       if (!command) {
-        console.error(`No command matching ${interaction.commandName} was found.`);
+        console.error(`No command matching ${commandName} was found.`);
         return;
       }
-      console.log(`[INFO] ${interaction.user.tag} used /${interaction.commandName}`);
+
       try {
         await command.execute(interaction);
       } catch (error) {
         console.error("[ERROR] ", error);
+
         if (interaction.replied || interaction.deferred) {
           await interaction.followUp({
             content: "Hubo un error ejecutando este comando!",
@@ -27,11 +35,14 @@ module.exports = {
         }
       }
     } else if (interaction.isButton()) {
-      // respond to the button
+      const buttonId = interaction.customId;
+
+      console.log(`[INFO] ${userTag} used button ${buttonId}`);
 
       // Joke response
       await interaction.reply({
-        content: "Baneando de forma permanente a <@317338514465357844> por la razón: Hablar demasiado"
+        content:
+          "Baneando de forma permanente a <@317338514465357844> por la razón: Hinchar las pelotas.",
       });
     } else if (interaction.isStringSelectMenu()) {
       // respond to the select menu

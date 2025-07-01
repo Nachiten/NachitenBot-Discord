@@ -1,16 +1,20 @@
 import {
-  CommandInteraction,
-  GuildMember,
   ChannelType,
-  PermissionsBitField, StageChannel, VoiceChannel,
+  ChatInputCommandInteraction,
+  GuildMember,
+  PermissionsBitField,
+  StageChannel,
+  VoiceChannel,
 } from "discord.js";
+import { deadPlayers } from "../state/state";
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function muteOrUnmuteChannel(interaction: CommandInteraction, mute: boolean) {
-  const EPHEMERAL_MODE = true;
+export async function muteOrUnmuteChannel(interaction: ChatInputCommandInteraction, mute: boolean) {
+  const EPHEMERAL_MODE = false;
+  const DELAY_MS = 250;
 
   const member = interaction.member as GuildMember;
   const requiredPermission = PermissionsBitField.Flags.MuteMembers;
@@ -25,6 +29,7 @@ export async function muteOrUnmuteChannel(interaction: CommandInteraction, mute:
 
   const voiceChannel: VoiceChannel | StageChannel | null = member.voice.channel;
 
+  // Check if user is in a voice channel
   if (!voiceChannel || voiceChannel.type !== ChannelType.GuildVoice) {
     return interaction.reply({
       content: "🚫 You need to be in a voice channel to use this command.",
@@ -48,7 +53,7 @@ export async function muteOrUnmuteChannel(interaction: CommandInteraction, mute:
   const action2 = mute ? "Muted" : "Unmuted";
 
   await interaction.reply({
-    content: `🔄 Processing ${action1} for ${voiceChannel.members.size} member(s)...`,
+    content: `🔄 Processing ${action1} for channel ${voiceChannel.name}...`,
     ...(EPHEMERAL_MODE ? { flags: 1 << 6 } : {}),
   });
 
@@ -57,18 +62,20 @@ export async function muteOrUnmuteChannel(interaction: CommandInteraction, mute:
 
   for (const [, member] of voiceChannel.members) {
     const isMuted = member.voice.serverMute;
-    const shouldChange = mute ? !isMuted : isMuted;
+    const valueChanged = isMuted !== mute;
+    const shouldChange = valueChanged && !deadPlayers.has(member.id);
 
-    if (shouldChange) {
-      try {
-        await member.voice.setMute(mute, `Channel-wide ${action1}`);
-        success++;
-      } catch (e) {
-        console.warn(`Couldn't ${action1} ${member.user.tag}:`, e);
-        failed++;
-      }
-      await delay(500);
+    if (!shouldChange) continue;
+
+    try {
+      await member.voice.setMute(mute, `Channel-wide ${action1}`);
+      success++;
+    } catch (e) {
+      console.warn(`Couldn't ${action1} ${member.user.tag}:`, e);
+      failed++;
     }
+
+    await delay(DELAY_MS);
   }
 
   const couldMute = `✅ ${action2} ${success} member(s) in **${voiceChannel.name}**.`;

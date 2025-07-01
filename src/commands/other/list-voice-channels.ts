@@ -1,22 +1,17 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import {
-  CommandInteraction,
-  ChannelType,
-  Guild,
-  GuildBasedChannel
-} from "discord.js";
+import { ChannelType, ChatInputCommandInteraction, Guild, GuildBasedChannel } from "discord.js";
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("list-voice-channels")
     .setDescription("Lists all voice channels in this server."),
 
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     const guild = interaction.guild as Guild;
 
     // Filtramos los canales de voz
     const voiceChannels = guild.channels.cache.filter(
-      (channel: GuildBasedChannel) => channel.type === ChannelType.GuildVoice
+      (channel: GuildBasedChannel) => channel.type === ChannelType.GuildVoice,
     );
 
     if (voiceChannels.size === 0) {
