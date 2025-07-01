@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction, GuildMember, User } from "discord.js";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -7,13 +7,18 @@ module.exports = {
     .setDescription("Provides information about the user."),
 
   async execute(interaction: CommandInteraction) {
-    // interaction.user is the object representing the User who ran the command
-    // interaction.member is the GuildMember object, which represents the user in the specific guild
-
+    // GuildMember object represents the user in the specific guild
     const guildMember = interaction.member as GuildMember;
 
+    // User object represents the User who ran the command
+    const user = interaction.user as User;
+
+    // Print guildMemeber, and user
+    console.log("Guild Member:", guildMember);
+    console.log("User:", user);
+
     await interaction.reply(
-      `This command was run by ${interaction.user.username}, who joined on ${guildMember.joinedAt}.`,
+      `This command was run by \`${user.username}\`, who joined on \`${guildMember.joinedAt}\`.`,
     );
   },
 };

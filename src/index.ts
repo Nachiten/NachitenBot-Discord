@@ -6,8 +6,6 @@ import path from "path";
 dotenv.config();
 
 const TOKEN: string = process.env.DISCORD_BOT_TOKEN || "";
-export const REDMINE_API_URL = process.env.REDMINE_API_URL || "";
-export const REDMINE_API_KEY = process.env.REDMINE_API_KEY || "";
 
 // Generate client with intents
 const client: any = new Client({
@@ -16,6 +14,7 @@ const client: any = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildVoiceStates
   ],
 });
 
