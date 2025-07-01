@@ -1,4 +1,8 @@
 import { Events } from "discord.js";
+import { log } from "../utils/logger";
+import { LOG_LEVEL } from "../config/config";
+
+const context = "interaction-create";
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -8,19 +12,22 @@ module.exports = {
     if (interaction.isChatInputCommand()) {
       const commandName = interaction.commandName;
 
-      console.log(`[INFO] ${userTag} used command /${commandName}`);
+      const message = `${userTag} used command /${commandName}`;
+      log(message, context);
 
       const command = interaction.client.commands.get(commandName);
 
       if (!command) {
-        console.error(`No command matching ${commandName} was found.`);
+        const message = `No command matching ${commandName} was found.`;
+        log(message, context, LOG_LEVEL.WARN);
         return;
       }
 
       try {
         await command.execute(interaction);
       } catch (error) {
-        console.error("[ERROR] ", error);
+        const errorMessage = `Error executing command /${commandName} by ${userTag} Error: ${error}`;
+        log(errorMessage, context, LOG_LEVEL.ERROR);
 
         if (interaction.replied || interaction.deferred) {
           await interaction.followUp({
@@ -37,7 +44,8 @@ module.exports = {
     } else if (interaction.isButton()) {
       const buttonId = interaction.customId;
 
-      console.log(`[INFO] ${userTag} used button ${buttonId}`);
+      const message = `${userTag} used button ${buttonId}`;
+      log(message, context);
 
       // Joke response
       await interaction.reply({

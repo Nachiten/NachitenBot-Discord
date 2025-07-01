@@ -2,10 +2,15 @@ import { Client, Collection, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+import { LOG_LEVEL } from "./config/config";
+import { log } from "./utils/logger";
 
 dotenv.config();
 
 const TOKEN: string = process.env.DISCORD_BOT_TOKEN || "";
+const foldersPath = path.join(__dirname, "commands");
+const commandFolders = fs.readdirSync(foldersPath);
+const context = "index";
 
 // Generate client with intents
 const client: any = new Client({
@@ -20,9 +25,6 @@ const client: any = new Client({
 
 client.commands = new Collection();
 
-const foldersPath = path.join(__dirname, "commands");
-const commandFolders = fs.readdirSync(foldersPath);
-
 // Get all the command files from the commands directory
 for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
@@ -36,9 +38,8 @@ for (const folder of commandFolders) {
     if ("data" in command && "execute" in command) {
       client.commands.set(command.data.name, command);
     } else {
-      console.log(
-        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
-      );
+      const message = `The command at ${filePath} is missing a required "data" or "execute" property.`;
+      log(message, context, LOG_LEVEL.WARN);
     }
   }
 }
@@ -58,5 +59,6 @@ for (const file of eventFiles) {
 
 // Logs the bot in discord using the token
 client.login(TOKEN).catch((error: any) => {
-  console.error("[ERROR] Login error: ", error);
+  const message = "Failed to login to Discord. Please check your bot token. Error:" + error;
+  log(message, context, LOG_LEVEL.ERROR);
 });

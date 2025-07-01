@@ -2,12 +2,15 @@ import fs from "fs";
 import path from "path";
 import { REST, Routes } from "discord.js";
 import dotenv from "dotenv";
+import { log } from "./utils/logger";
+import { LOG_LEVEL } from "./config/config";
 
 dotenv.config();
 
 const TOKEN: string = process.env.DISCORD_BOT_TOKEN || "";
 const CLIENT_ID: string = process.env.DISCORD_BOT_CLIENT_ID || "";
 const SERVER_ID: string = process.env.DISCORD_SERVER_ID || "";
+const context = "deploy-commands";
 
 const commands = [];
 
@@ -27,9 +30,8 @@ for (const folder of commandFolders) {
     if ("data" in command && "execute" in command) {
       commands.push(command.data.toJSON());
     } else {
-      console.log(
-        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
-      );
+      const message = `The command at ${filePath} is missing a required "data" or "execute" property.`;
+      log(message, context, LOG_LEVEL.WARN);
     }
   }
 }
@@ -40,11 +42,13 @@ const rest = new REST().setToken(TOKEN);
 // Deploy the commands!
 (async () => {
   try {
-    console.log(`Started refreshing ${commands.length} application (/) commands.`);
+    const message1 = `Started refreshing ${commands.length} application (/) commands.`;
+    log(message1, context);
 
     // List every command name
     commands.forEach((command) => {
-      console.log(`- ${command.name}`);
+      const message = `- ${command.name}`;
+      log(message, context);
     });
 
     // The put method is used to fully refresh all commands in the guild with the current set
@@ -52,9 +56,10 @@ const rest = new REST().setToken(TOKEN);
       body: commands,
     });
 
-    console.log(`Successfully reloaded ${data.length} application (/) commands.`);
-  } catch (error) {
-    // And of course, make sure you catch and log any errors!
-    console.error(error);
+    const message2 = `Successfully reloaded ${data.length} application (/) commands.`;
+    log(message2, context);
+  } catch (error: any) {
+    const message = `Failed to deploy commands: ${error?.message}`;
+    log(message, context, LOG_LEVEL.ERROR);
   }
 })();

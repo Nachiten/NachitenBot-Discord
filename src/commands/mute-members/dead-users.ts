@@ -1,29 +1,27 @@
 import { SlashCommandBuilder, userMention } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
 import { deadPlayers } from "../../state/state";
+import { interactionReply } from "../../utils/interaction-reply";
+
+const commandInfo = {
+  name: "dead-users",
+  description: "Show a list of users marked as dead",
+};
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("dead-users")
-    .setDescription("Shows a list of users marked as dead."),
+  data: new SlashCommandBuilder().setName(commandInfo.name).setDescription(commandInfo.description),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    const EPHEMERAL_MODE = false;
-
     if (deadPlayers.size === 0) {
-      return interaction.reply({
-        content: "💡 There are no dead users right now.",
-        ...(EPHEMERAL_MODE ? { flags: 1 << 6 } : {}),
-      });
+      const message = "💡 There are no dead users right now.";
+      return await interactionReply(interaction, message, commandInfo.name);
     }
 
     const mentions = Array.from(deadPlayers)
       .map((userId) => userMention(userId))
       .join("\n");
 
-    await interaction.reply({
-      content: `💀 Dead users:\n${mentions}`,
-      ...(EPHEMERAL_MODE ? { flags: 1 << 6 } : {}),
-    });
+    const message = `💀 Dead users:\n${mentions}`;
+    return await interactionReply(interaction, message, commandInfo.name);
   },
 };

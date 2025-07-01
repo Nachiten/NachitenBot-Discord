@@ -2,10 +2,13 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChatInputCommandInteraction } from "discord.js";
 import { muteOrUnmuteChannel } from "../../utils/voice-utils";
 
+const commandInfo = {
+  name: "unmute-channel",
+  description: "Unmute everyone in your current voice channel",
+};
+
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("unmute-channel")
-    .setDescription("Unmute everyone in your current voice channel."),
+  data: new SlashCommandBuilder().setName(commandInfo.name).setDescription(commandInfo.description),
 
   async execute(interaction: ChatInputCommandInteraction) {
     await muteOrUnmuteChannel(interaction, false);

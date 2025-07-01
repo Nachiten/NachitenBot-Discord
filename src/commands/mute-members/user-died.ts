@@ -7,19 +7,36 @@ import {
   User,
 } from "discord.js";
 import { deadPlayers } from "../../state/state";
+import { interactionReply } from "../../utils/interaction-reply";
+import { log } from "../../utils/logger";
+import { LOG_LEVEL } from "../../config/config";
+
+const commandInfo = {
+  name: "user-died",
+  description: "Mark a user as dead and mute them",
+  options: [
+    {
+      name: "user",
+      type: "USER",
+      description: "The user who died",
+      required: true,
+    },
+  ],
+};
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("user-died")
-    .setDescription("Marks a user as dead (and mutes them)")
+    .setName(commandInfo.name)
+    .setDescription(commandInfo.description)
     .addUserOption((option) =>
-      option.setName("user").setDescription("The user who died").setRequired(true),
+      option
+        .setName(commandInfo.options[0].name)
+        .setDescription(commandInfo.options[0].description)
+        .setRequired(commandInfo.options[0].required),
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    const EPHEMERAL_MODE = false;
-
-    const deadUser: User = interaction.options.getUser("user", true);
+    const deadUser: User = interaction.options.getUser(commandInfo.options[0].name, true);
     const deadMember = interaction.guild!.members.cache.get(deadUser.id) as GuildMember;
 
     const member = interaction.member as GuildMember;
@@ -27,18 +44,14 @@ module.exports = {
 
     // Check if user has permission
     if (!member.permissions.has(requiredPermission)) {
-      return interaction.reply({
-        content: "🚫 You don't have permission to mute or unmute members.",
-        ...(EPHEMERAL_MODE ? { flags: 1 << 6 } : {}),
-      });
+      const message = "🚫 You don't have permission to mute or unmute members.";
+      return await interactionReply(interaction, message, commandInfo.name);
     }
 
     // Check if user is already dead
     if (deadPlayers.has(deadUser.id)) {
-      return interaction.reply({
-        content: `💀 ${userMention(deadUser.id)} is already dead.`,
-        ...(EPHEMERAL_MODE ? { flags: 1 << 6 } : {}),
-      });
+      const message = `💀 ${userMention(deadUser.id)} is already marked as dead.`;
+      return await interactionReply(interaction, message, commandInfo.name);
     }
 
     deadPlayers.add(deadUser.id);
@@ -49,13 +62,12 @@ module.exports = {
       try {
         await deadMember.voice.setMute(true, "Player died");
       } catch (e) {
-        console.warn(`Couldn't mute ${deadUser.tag}:`, e);
+        const message = `🚫 Could not mute ${userMention(deadUser.id)}. They might not be in a voice channel.`;
+        log(message, commandInfo.name, LOG_LEVEL.WARN);
       }
     }
 
-    await interaction.reply({
-      content: `💀 ${userMention(deadUser.id)} is now dead and muted.`,
-      ...(EPHEMERAL_MODE ? { flags: 1 << 6 } : {}),
-    });
+    const message = `💀 ${userMention(deadUser.id)} is now dead and muted.`;
+    return await interactionReply(interaction, message, commandInfo.name);
   },
 };
