@@ -6,11 +6,14 @@ import {
 } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
+const commandInfo = {
+  name: "button-test",
+  description: "Test de botones!! NO USAR",
+};
+
 module.exports = {
   cooldown: 5,
-  data: new SlashCommandBuilder()
-    .setName("button-test")
-    .setDescription("Test de botones!! NO USAR"),
+  data: new SlashCommandBuilder().setName(commandInfo.name).setDescription(commandInfo.description),
   execute: async function (interaction: ChatInputCommandInteraction) {
     await executeCommand(interaction);
   },

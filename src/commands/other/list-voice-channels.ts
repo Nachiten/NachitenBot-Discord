@@ -1,10 +1,14 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ChannelType, ChatInputCommandInteraction, Guild, GuildBasedChannel } from "discord.js";
+import { interactionReply } from "../../utils/interaction-reply";
+
+const commandInfo = {
+  name: "list-voice-channels",
+  description: "Lists all voice channels in this server",
+};
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("list-voice-channels")
-    .setDescription("Lists all voice channels in this server."),
+  data: new SlashCommandBuilder().setName(commandInfo.name).setDescription(commandInfo.description),
 
   async execute(interaction: ChatInputCommandInteraction) {
     const guild = interaction.guild as Guild;
@@ -20,9 +24,7 @@ module.exports = {
 
     const channelList = voiceChannels.map((ch) => `• ${ch.name}`).join("\n");
 
-    await interaction.reply({
-      content: `🎧 Voice channels in this server:\n${channelList}`,
-      // flags: 1 << 6,
-    });
+    const message = `🎧 Voice channels in this server:\n${channelList}`;
+    return await interactionReply(interaction, message, commandInfo.name);
   },
 };

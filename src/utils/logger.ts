@@ -12,5 +12,5 @@ export function log(
 ) {
   if (logLevel < CONFIG.LOG_LEVEL) return;
 
-  console.log(`${getTimestamp()} [${LOG_LEVEL[logLevel]}] [${context}] ${message}`);
+  console.log(`${getTimestamp()} [${LOG_LEVEL[logLevel]}] (${context}) ${message}`);
 }

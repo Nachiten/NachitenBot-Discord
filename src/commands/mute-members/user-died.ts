@@ -67,7 +67,10 @@ module.exports = {
       }
     }
 
+    const logMessage = `💀 User ${deadUser.tag} is now dead and muted.`;
+    log(logMessage, commandInfo.name, LOG_LEVEL.INFO);
+
     const message = `💀 ${userMention(deadUser.id)} is now dead and muted.`;
-    return await interactionReply(interaction, message, commandInfo.name);
+    return await interactionReply(interaction, message, commandInfo.name, LOG_LEVEL.INFO, false);
   },
 };

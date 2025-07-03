@@ -7,8 +7,9 @@ export function interactionReply(
   message: string,
   context: string = "global",
   logLevel: LOG_LEVEL = LOG_LEVEL.INFO,
+  doLog: boolean = true,
 ) {
-  log(message, context, logLevel);
+  if (doLog) log(message, context, logLevel);
 
   return interaction.reply({
     content: message,
