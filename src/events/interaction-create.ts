@@ -20,6 +20,12 @@ module.exports = {
       if (!command) {
         const message = `No command matching ${commandName} was found.`;
         log(message, context, LOG_LEVEL.WARN);
+
+        await interaction.reply({
+          content: "Este comando no existe!",
+          ephemeral: true,
+        });
+
         return;
       }
 
